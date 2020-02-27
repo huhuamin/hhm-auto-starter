@@ -1,6 +1,5 @@
 package com.huhuamin.starter.sms;
 
-import com.huhuamin.AlibabaSmsConfiguration;
 import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsProperties;
 
 
