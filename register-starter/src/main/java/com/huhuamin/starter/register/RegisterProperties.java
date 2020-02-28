@@ -20,9 +20,8 @@ public class RegisterProperties {
     private String registerType = "default";
     /**
      * 默认不校验极光id pushID
-     *
      * <p>
-     * 如说校验 checkPushId=push 校验ios 和安卓
+     * 如说校验 checkPushId=push 且 目前只支持校验ios 和安卓
      */
     private String checkPushId = "default";
 

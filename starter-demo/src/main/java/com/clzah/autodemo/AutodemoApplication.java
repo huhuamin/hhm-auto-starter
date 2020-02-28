@@ -1,6 +1,7 @@
 package com.clzah.autodemo;
 
 import com.huhuamin.jedis.distributed.lock.service.JedisService;
+import com.huhuamin.starter.register.service.IRegisterService;
 import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsClient;
 import com.huhuamin.starter.sms.exteral.yzx.YzxSmsClient;
 import com.huhuamin.starter.sms.exteral.yzx.sdk.ReqSendMessage;
@@ -21,6 +22,9 @@ public class AutodemoApplication implements ApplicationRunner {
     private AlibabaSmsClient alibabaSmsClient;
     @Autowired
     private JedisService jedisService;
+    @Autowired
+    private IRegisterService registerService;
+
 
     public static void main(String[] args) {
         SpringApplication.run(AutodemoApplication.class, args);
@@ -39,6 +43,7 @@ public class AutodemoApplication implements ApplicationRunner {
         System.out.println(result);
         jedisService.setKeyValue("huhuamin", "tttt", 1000);
         System.out.println(jedisService.getValueByKey("huhuamin"));
+        System.out.println(registerService);
 
 
     }

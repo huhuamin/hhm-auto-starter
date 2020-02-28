@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(JedisDistributedLockAutoConfiguration.class)
 @EnableConfigurationProperties({RegisterProperties.class})
 @ConditionalOnProperty(name = {"spring.jedis.lock.enabled", "spring.register.enabled"}, havingValue = "true", matchIfMissing = false)
-public class RegisterStarterAutoConfiguration {
+public class RegisterAutoConfiguration {
 
 
     /**
