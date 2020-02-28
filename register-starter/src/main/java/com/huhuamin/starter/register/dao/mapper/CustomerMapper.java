@@ -46,5 +46,5 @@ public interface CustomerMapper extends MapperDb<Customer> {
 
     Byte selectFreezeStatusByCustId(String custId);
 
-    int updatePushIdAndCustId(String custId, String pushId);
+    int updatePushIdAndCustId(@Param("custId") String custId,@Param("pushId") String pushId);
 }

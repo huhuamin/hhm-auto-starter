@@ -57,11 +57,6 @@ public class DefaultRegisterServiceImpl implements IRegisterService, MapperPostP
     public DefaultRegisterServiceImpl() {
     }
 
-    @Value("${off_line}")
-    private boolean off_line;
-    @Value("${server_name}")
-    private String serverName;
-    private GeoPoint geoPoint;
 
     @Override
     public JsonResult postProcessorBefore(ReqLoginPhone reqRegister, JsonResult jsonResult) {
@@ -143,7 +138,7 @@ public class DefaultRegisterServiceImpl implements IRegisterService, MapperPostP
         if (null == list) {
             return null;
         }
-        if (list.size() > 0) {
+        if (list.size() > 1) {
             throw new HuhuaminException("系统手机号存在重复");
         }
         return list.stream().findFirst().orElse(null);

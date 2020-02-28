@@ -34,9 +34,8 @@ public class OnlyRegisterServiceImpl implements IRegisterService, MapperPostProc
     private JedisService jedisService;
     private RegisterProperties registerProperties;
 
-    @Value("${off_line}")
+
     private boolean off_line;
-    @Value("${server_name}")
     private String serverName;
     /**
      * 默认Geo
@@ -46,11 +45,13 @@ public class OnlyRegisterServiceImpl implements IRegisterService, MapperPostProc
     public OnlyRegisterServiceImpl() {
     }
 
-    public OnlyRegisterServiceImpl(GeoPoint geoPoint, MapperPostProcessor delete, RegisterProperties registerProperties, JedisService jedisService) {
+    public OnlyRegisterServiceImpl(boolean off_line, String serverName, GeoPoint geoPoint, MapperPostProcessor delete, RegisterProperties registerProperties, JedisService jedisService) {
         this.registerProperties = registerProperties;
         this.jedisService = jedisService;
         this.delete = delete;
         this.geoPoint = geoPoint;
+        this.off_line = off_line;
+        this.serverName = serverName;
     }
 
 
@@ -161,7 +162,7 @@ public class OnlyRegisterServiceImpl implements IRegisterService, MapperPostProc
 //        customer.setInviteCode(custId);
         customer.setCustType(reqRegister.getCustType().intValue());
         serverName = StringUtils.isEmpty(serverName) ? "胡化敏" : serverName;
-        String nickName = serverName.concat(reqRegister.getPhone().substring(7, 11));
+        String nickName = serverName.concat("_").concat(reqRegister.getPhone().substring(7, 11));
         customer.setNickName(nickName);
         customer.setInviteCode(custId);
         customer.setRegistTime(now);

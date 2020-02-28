@@ -4,7 +4,6 @@ import com.huhuamin.req.ReqComm;
 import com.huhuamin.result.JsonResult;
 
 
-
 /**
  * @param <Req> {@link ReqComm}
  * @param <R>   {@link JsonResult}

@@ -386,7 +386,7 @@
     </select>
 
     <!--  alter table andji_system_param_base add INDEX IDX_PARAM_INDEX using BTREE(PARAM_INDEX,PARAM_VALUE) COMMENT '参数类型值-联合索引减少回表' -->
-    <select id="selectByIndex" resultType="String">
+    <select id="selectDefaultImg" resultType="String">
         select SQL_CACHE PARAM_VALUE from andji_system_param_base where PARAM_INDEX=#{paramIndex}
     </select>
     <select id="selectFreezeStatusByCustId" resultType="byte">

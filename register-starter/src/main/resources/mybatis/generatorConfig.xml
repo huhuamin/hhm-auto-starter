@@ -36,9 +36,12 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
+<!--        <table schema="fm" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false"-->
+<!--               enableSelectByExample="false" tableName="clzah_basic_customer_base"-->
+<!--               domainObjectName="Customer"/>-->
         <table schema="fm" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false"
-               enableSelectByExample="false" tableName="clzah_basic_customer_base"
-               domainObjectName="Customer"/>
+               enableSelectByExample="false" tableName="andji_system_param_base"
+               domainObjectName="SystemParam"/>
     </context>
 </generatorConfiguration>
 

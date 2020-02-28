@@ -9,6 +9,7 @@ import com.huhuamin.mybatis.type.handler.GeoPoint;
 import com.huhuamin.starter.register.service.IRegisterService;
 import com.huhuamin.starter.register.service.impl.OnlyRegisterServiceImpl;
 import com.huhuamin.starter.register.service.impl.DefaultRegisterServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,7 +29,11 @@ import java.math.BigDecimal;
 @ConditionalOnProperty(name = {"spring.jedis.lock.enabled", "spring.register.enabled"}, havingValue = "true", matchIfMissing = false)
 public class RegisterAutoConfiguration {
     public static String BEAN_NAME_ONLY_REGISTER_SERVICE = "onlyRegisterService";
-    public static String BEAN_NAME_DEFAULT_REGISTER_SERVICE = "defaultRegisterServiceImpl";
+    public static String BEAN_NAME_DEFAULT_REGISTER_SERVICE = "defaultRegisterService";
+    @Value("${off_line}")
+    private boolean off_line;
+    @Value("${server_name}")
+    private String serverName;
 
     @Bean
     public MapperPostProcessor mapperPostProcessor() {
@@ -48,7 +53,7 @@ public class RegisterAutoConfiguration {
      */
     @Bean("onlyRegisterService")
     public IRegisterService onlyRegisterService(RegisterProperties registerProperties, JedisService jedisService) {
-        return new OnlyRegisterServiceImpl(geoPoint(), mapperPostProcessor(), registerProperties, jedisService);
+        return new OnlyRegisterServiceImpl(off_line,serverName,geoPoint(), mapperPostProcessor(), registerProperties, jedisService);
     }
 
     /**
@@ -58,7 +63,7 @@ public class RegisterAutoConfiguration {
      * @param jedisService
      * @return
      */
-    @Bean("defaultRegisterServiceImpl")
+    @Bean("defaultRegisterService")
     public IRegisterService defaultRegisterService(RegisterProperties registerProperties, JedisService jedisService) {
         return new DefaultRegisterServiceImpl(onlyRegisterService(registerProperties, jedisService), registerProperties, jedisService);
 

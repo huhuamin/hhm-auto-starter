@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
  * @Date: 2020/2/28 11:41
  * @Description: 默认实现 增加 设备号校验
  */
-public class DefaultMapperPostProcessor implements MapperPostProcessor {
+public class DefaultMapperPostProcessor implements MapperPostProcessor<ReqComm, JsonResult> {
     /**
      * 默认实现 校验设备号
      *
