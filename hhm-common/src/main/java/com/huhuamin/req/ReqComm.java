@@ -9,9 +9,8 @@ import javax.validation.constraints.NotNull;
  */
 public class ReqComm {
     /**
-     * 设备id
+     * 设备id PC/WAP浏览器可不填
      */
-    @NotNull(message = "deviceId不能为空")
     private String deviceId;
     /**
      * 时间戳
@@ -22,7 +21,7 @@ public class ReqComm {
      */
     ///来源[1-微信 2-WAP 3-Android 4-iOS 5-pc]
     @NotNull(message = "registerSource不能为空")
-    @Range(min = 1, max = 5, message = "registerSource范围是1-7")
+    @Range(min = 1, max = 7, message = "registerSource范围是1-7")
     private Byte registerSource;
 
     private String tokenCustId;

@@ -5,7 +5,7 @@ package com.huhuamin.req.constants;
  * @Date: 2020/2/27 20:42
  * @Description:
  */
-public class RegisterSourceType {
+public class DeviceType {
     //注册来源[1-微信 2-WAP 3-Android 4-iOS 5-pc 6-手动创建 7-小程序]
     /**
      * 1-微信
@@ -22,7 +22,7 @@ public class RegisterSourceType {
     /**
      * 4-iOS
      */
-    public static int iOS = 4;
+    public static int IOS = 4;
     /**
      * 5-pc
      */
