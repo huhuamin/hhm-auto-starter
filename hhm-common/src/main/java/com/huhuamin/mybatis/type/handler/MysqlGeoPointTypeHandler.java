@@ -26,6 +26,10 @@ import java.sql.SQLException;
 public class MysqlGeoPointTypeHandler extends BaseTypeHandler<GeoPoint> {
     private WKBReader _wkbReader;
 
+    public MysqlGeoPointTypeHandler() {
+        this(0);
+    }
+
     public MysqlGeoPointTypeHandler(int srid) {
         GeometryFactory _geometryFactory = new GeometryFactory(new PrecisionModel(), srid);
         _wkbReader = new WKBReader(_geometryFactory);

@@ -2,7 +2,7 @@ package com.huhuamin.service;
 
 import com.huhuamin.mybatis.mapper.MapperDb;
 import com.huhuamin.req.ReqComm;
-import com.huhuamin.req.json.result.JsonResult;
+import com.huhuamin.result.JsonResult;
 
 /**
  * 通用Mapper处理，自动注入提供默认实现，用户重新覆盖扩展

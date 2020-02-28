@@ -389,6 +389,16 @@
     <select id="selectByIndex" resultType="String">
         select SQL_CACHE PARAM_VALUE from andji_system_param_base where PARAM_INDEX=#{paramIndex}
     </select>
+    <select id="selectFreezeStatusByCustId" resultType="byte">
+        select FREEZE_STATUS
+        from clzah_basic_customer_base
+        where CUST_ID = #{custId,jdbcType=CHAR}
+    </select>
+
+    <!-- 清除 其他推送id-->
+    <update id="updatePushIdAndCustId">
+        update clzah_basic_customer_base set PUSH_ID='' where PUSH_ID=#{pushId} and CUST_ID!=#{custId}
+    </update>
     <!--  -->
     <!--  <if test="mapCoord != null">geomfromtext('point(${mapCoord.lng} ${mapCoord.lat})'),</if>-->
     <!--  <if test="mapCoord != null">MAP_COORD =geomfromtext('point(${mapCoord.lng} ${mapCoord.lat})'),</if>-->

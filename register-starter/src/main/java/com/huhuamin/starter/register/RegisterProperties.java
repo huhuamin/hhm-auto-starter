@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RegisterProperties {
     public static String DEFAULT_TYPE = "default";
     public static String NEED_PUSH = "push";
+    public static String REGISTER = "register";
 
     /**
      * default默认注册登录

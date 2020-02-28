@@ -7,22 +7,21 @@ import com.huhuamin.jedis.distributed.lock.service.JedisService;
 import com.huhuamin.mybatis.mapper.MapperPostProcessor;
 import com.huhuamin.mybatis.type.handler.GeoPoint;
 import com.huhuamin.req.constants.HhmConstants;
-import com.huhuamin.req.json.result.JsonResult;
-import com.huhuamin.service.Service;
+import com.huhuamin.result.JsonResult;
+import com.huhuamin.result.TypeJsonResult;
 import com.huhuamin.starter.register.RegisterProperties;
 import com.huhuamin.starter.register.dao.mapper.CustomerMapper;
 import com.huhuamin.starter.register.dao.model.Customer;
 import com.huhuamin.starter.register.req.ReqLoginPhone;
 import com.huhuamin.starter.register.service.IRegisterService;
-import com.huhuamin.starter.register.utils.RedisSessionUtils;
 import com.huhuamin.utils.UUIDUtils;
-import com.huhuamin.validate.CommonValidate;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: Huhuamin
@@ -47,10 +46,12 @@ public class DefaultRegisterServiceImpl implements IRegisterService, MapperPostP
 
 
     private RegisterProperties registerProperties;
+    private IRegisterService registerService;
 
-    public DefaultRegisterServiceImpl(RegisterProperties registerProperties, JedisService jedisService) {
+    public DefaultRegisterServiceImpl(IRegisterService defaultRegisterService, RegisterProperties registerProperties, JedisService jedisService) {
         this.registerProperties = registerProperties;
         this.jedisService = jedisService;
+        this.registerService = defaultRegisterService;
     }
 
     public DefaultRegisterServiceImpl() {
@@ -60,71 +61,66 @@ public class DefaultRegisterServiceImpl implements IRegisterService, MapperPostP
     private boolean off_line;
     @Value("${server_name}")
     private String serverName;
-    private GeoPoint geoPoint = new GeoPoint(new BigDecimal(116.3974700000d), new BigDecimal(39.9088230000d));
+    private GeoPoint geoPoint;
 
     @Override
     public JsonResult postProcessorBefore(ReqLoginPhone reqRegister, JsonResult jsonResult) {
-        //默认的逻辑处理
-        jsonResult = delete.postProcessorBefore(reqRegister, jsonResult);
-
-        if (jsonResult.getStatusCode() && CommonValidate.checkDeviceId(reqRegister)) {
-            //自己的业务逻辑处理
-            //设备号校验
-            if (StringUtils.isEmpty(reqRegister.getDeviceId())) {
-                jsonResult.setStatusCode(false);
-                jsonResult.setMessage("设备号不能为空");
-                return jsonResult;
-            }
-            //推送校验
-            if (StringUtils.isEmpty(reqRegister.getPushId())) {
-                //是否需要校验推送
-                if (registerProperties.getCheckPushId().equals(RegisterProperties.NEED_PUSH)) {
-                    jsonResult.setStatusCode(false);
-                    jsonResult.setMessage("没有获取到你的推送标识");
-                    return jsonResult;
-                }
-            }
-        }
-        String codeType = threadLocalTransfer.get();
-        String serverPhone = jedisService.getValueByKey(codeType + reqRegister.getPhone() + HhmConstants.TARGET_NUMBER);
-        if (null == serverPhone) {
-            jsonResult.setStatusCode(false);
-            jsonResult.setMessage("验证码过期或未发送");
-            return jsonResult;
-        }
-        //jedisService有没有过期判断
-        RedisSessionUtils.handleSesseionValid(reqRegister.getPhone(), jsonResult, jedisService, off_line, codeType);
-        if (!jsonResult.getStatusCode()) {
-            return jsonResult;
-        }
-        //验证码正确性校验
-        jsonResult = RedisSessionUtils.handlerPhone(serverPhone, reqRegister.getPhoneCode(), jedisService, codeType, off_line);
-        return jsonResult;
+        OnlyRegisterServiceImpl onlyRegisterService = (OnlyRegisterServiceImpl) registerService;
+        return onlyRegisterService.postProcessorBefore(reqRegister, jsonResult);
     }
 
     @Override
+    @Transactional
     public JsonResult doService(CustomerMapper customerMapper, ReqLoginPhone reqRegister) {
-        String prefix = "phone";
+        String prefix = "doLoginPhone";
         String identifier = null;
+        boolean register = RegisterProperties.DEFAULT_TYPE.equals(registerProperties.getRegisterType());
         try {
             identifier = jedisService.acquireLock(prefix + reqRegister.getPhone());
-            JsonResult jsonResult = new JsonResult(false);
-            jsonResult = postProcessorBefore(reqRegister, jsonResult);
-            if (!jsonResult.getStatusCode()) return jsonResult;
-
-            doRegister(customerMapper, reqRegister);
-
-            jsonResult.setStatusCode(true);
-            return jsonResult;
+            TypeJsonResult<Customer> typeJsonResult = new TypeJsonResult<>();
+            typeJsonResult.setStatusCode(false);
+            Customer customer = getByPhone(customerMapper, reqRegister.getPhone());
+            if (customer == null && !register) {//短信默认登录没开启 未注册不能注册
+                //如果没注册 需要注册 返回去注册
+                typeJsonResult.setCode(310);
+                typeJsonResult.setMessage("账号未注册请先注册");
+                return typeJsonResult;
+            }
+            if (customer == null && register) {//短信默认登录开启 未注册 直接注册
+                JsonResult jsonResult = registerService.doService(customerMapper, reqRegister);
+                if (!jsonResult.getStatusCode()) {
+                    typeJsonResult.setMessage(jsonResult.getMessage());
+                    return typeJsonResult;
+                }
+                customer = getByPhone(customerMapper, reqRegister.getPhone());
+                customer.setToken(UUIDUtils.genertateUuid32());
+//                        appOpen(customer.getCustId());
+                jedisService.refreshCustToken(customer.getCustId(), customer.getToken());
+                refreshPushId(reqRegister, customer, customerMapper);
+                typeJsonResult.setType(customer);
+                typeJsonResult.setStatusCode(true);
+                return typeJsonResult;
+            }
+            //登录成功 判断 是否被冻结
+            if (freezeStatusCheck(typeJsonResult, customer)) return typeJsonResult;
+            if (null != customer) {
+                refreshPushId(reqRegister, customer, customerMapper);
+                customer.setToken(UUIDUtils.genertateUuid32());
+//                        appOpen(customer.getCustId());
+                jedisService.refreshCustToken(customer.getCustId(), customer.getToken());
+            }
+            typeJsonResult.setType(customer);
+            typeJsonResult.setStatusCode(true);
+            return typeJsonResult;
         } catch (Exception e) {
-            String msg = "注册";
+            String msg = "短信登录过程中";
             msg = String.format("在%s过程中,服务器开小差了", msg);
             if (e instanceof HuhuaminException) {
                 throw new HuhuaminExceptionPlan(e.getMessage());
             }
-            throw new HuhuaminException(msg, e);
+            throw new HuhuaminException(msg + e.getMessage(), e);
         } finally {
-            if (StringUtils.hasText(identifier)) {
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(identifier)) {
                 boolean flag = jedisService.releaseLock(prefix + reqRegister.getPhone(), identifier);
                 if (!flag) {
                     throw new HuhuaminException("数据处理超时");
@@ -139,48 +135,41 @@ public class DefaultRegisterServiceImpl implements IRegisterService, MapperPostP
         return jsonResult;
     }
 
+
+    private Customer getByPhone(CustomerMapper customerMapper, String phone) {
+        Customer query = new Customer();
+        query.setCustPhone(phone);
+        List<Customer> list = customerMapper.selectSelective(query);
+        if (null == list) {
+            return null;
+        }
+        if (list.size() > 0) {
+            throw new HuhuaminException("系统手机号存在重复");
+        }
+        return list.stream().findFirst().orElse(null);
+    }
+
     /**
-     * 注册
+     * 权限已被冻结
      *
-     * @param reqRegister
+     * @param typeJsonResult
+     * @param customer
      * @return
      */
-    private void doRegister(CustomerMapper customerMapper, ReqLoginPhone reqRegister) {
-        Date now = new Date();
-        Customer customer = new Customer();
-        String custId = UUIDUtils.generateUuid22();
-        customer.setCustPhone(reqRegister.getPhone());
-        if (null == reqRegister.getRegisterSource()) {
-            customer.setRegistSource((byte) 1);
-        } else {
-            customer.setRegistSource(reqRegister.getRegisterSource().byteValue());
+    private boolean freezeStatusCheck(TypeJsonResult<Customer> typeJsonResult, Customer customer) {
+        if (null != customer && customer.getFreezeStatus().intValue() == 3) {
+            // 未查询到账号
+            typeJsonResult.setStatusCode(false);
+            typeJsonResult.setCode(304);
+            typeJsonResult.setMessage("无使用权限，注:您的使用权限已被冻结，请联系客服");
+            return true;
         }
-        customer.setRegistTime(now);
-        customer.setCustId(custId);
-//        customer.setInviteCode(custId);
-        customer.setCustType(reqRegister.getCustType().intValue());
-        serverName = StringUtils.isEmpty(serverName) ? "胡化敏" : serverName;
-        String nickName = serverName.concat(reqRegister.getPhone().substring(7, 11));
-        customer.setNickName(nickName);
-        customer.setInviteCode(custId);
-        customer.setRegistTime(now);
-        customer.setCustSex((byte) 3);
-        customer.setFreezeStatus((byte) 4);
-        customer.setInviterCode(reqRegister.getInviterCode());
-        customer.setDelFlag((byte) 1);
+        return false;
+    }
 
-        String img3 = customerMapper.selectDefaultImg("default_headimg");
-
-        customer.setHeadImg(img3);
-
-        customerMapper.insertSelective(customer);
-
-//        try {
-//            RongcloudUtil.registUser(customer.getCustId(), customer.getNickName(), "http://img.up-coach.com/" + customer.getHeadImg());
-//        } catch (Exception e) {
-//            throw new HuhuaminException("融云绑定失败");
-//        }
-
+    private void refreshPushId(ReqLoginPhone reqRegister, Customer customer, CustomerMapper customerMapper) {
+        OnlyRegisterServiceImpl onlyRegisterService = (OnlyRegisterServiceImpl) registerService;
+        onlyRegisterService.refreshPushId(reqRegister, customer, customerMapper);
     }
 
 

@@ -190,17 +190,17 @@ public class JedisService {
 
     }
 
-//    public void refreshCustToken(String custId, String token) {
-//
+    public void refreshCustToken(String custId, String token) {
+
 //        SocketJson socketJson = new SocketJson();
 //        socketJson.setCustType(3);
 //        socketJson.setFormType("otherLogin");
 //        socketJson.setType("其他设备登录");
 //        WebSocket.sendMessageCustId(custId, JSON.toJSONString(socketJson));
-//        setKeyValue(token, custId, null);
-//        setKeyValue(custId, token, null);
-//
-//    }
+        setKeyValue(token, custId, null);
+        setKeyValue(custId, token, null);
+
+    }
 
 
     public void setKeyValueToDay(String key, String value) {

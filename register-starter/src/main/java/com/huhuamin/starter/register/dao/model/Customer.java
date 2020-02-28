@@ -1,6 +1,7 @@
 package com.huhuamin.starter.register.dao.model;
 
 import com.huhuamin.mybatis.type.handler.GeoPoint;
+import com.huhuamin.starter.register.dao.extra.CustomerExtra;
 
 import java.util.Date;
 
@@ -10,7 +11,7 @@ import java.util.Date;
  *
  * @mbg.generated do_not_delete_during_merge Fri Feb 28 14:12:14 CST 2020
  */
-public class Customer {
+public class Customer extends CustomerExtra {
     /**
      * 主键
      * <p>

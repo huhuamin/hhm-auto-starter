@@ -3,14 +3,19 @@ package com.huhuamin.starter.register;
 
 import com.huhuamin.jedis.distributed.lock.JedisDistributedLockAutoConfiguration;
 import com.huhuamin.jedis.distributed.lock.service.JedisService;
+import com.huhuamin.mybatis.mapper.DefaultMapperPostProcessor;
+import com.huhuamin.mybatis.mapper.MapperPostProcessor;
+import com.huhuamin.mybatis.type.handler.GeoPoint;
 import com.huhuamin.starter.register.service.IRegisterService;
+import com.huhuamin.starter.register.service.impl.OnlyRegisterServiceImpl;
 import com.huhuamin.starter.register.service.impl.DefaultRegisterServiceImpl;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.math.BigDecimal;
 
 /**
  * @Auther: Huhuamin
@@ -22,17 +27,40 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({RegisterProperties.class})
 @ConditionalOnProperty(name = {"spring.jedis.lock.enabled", "spring.register.enabled"}, havingValue = "true", matchIfMissing = false)
 public class RegisterAutoConfiguration {
+    public static String BEAN_NAME_ONLY_REGISTER_SERVICE = "onlyRegisterService";
+    public static String BEAN_NAME_DEFAULT_REGISTER_SERVICE = "defaultRegisterServiceImpl";
 
+    @Bean
+    public MapperPostProcessor mapperPostProcessor() {
+        return new DefaultMapperPostProcessor();
+    }
+
+    //    默认 背景天安门
+    @Bean
+    public GeoPoint geoPoint() {
+        return new GeoPoint(new BigDecimal(116.3974700000d), new BigDecimal(39.9088230000d));
+    }
+
+    /**
+     * 仅仅是注册
+     *
+     * @return
+     */
+    @Bean("onlyRegisterService")
+    public IRegisterService onlyRegisterService(RegisterProperties registerProperties, JedisService jedisService) {
+        return new OnlyRegisterServiceImpl(geoPoint(), mapperPostProcessor(), registerProperties, jedisService);
+    }
 
     /**
      * 默认实现 default 登录 注册
      *
+     * @param registerProperties
+     * @param jedisService
      * @return
      */
-    @ConditionalOnMissingBean(IRegisterService.class)
-    @Bean
-    public IRegisterService registerService(RegisterProperties registerProperties, JedisService jedisService) {
-        return new DefaultRegisterServiceImpl(registerProperties, jedisService);
+    @Bean("defaultRegisterServiceImpl")
+    public IRegisterService defaultRegisterService(RegisterProperties registerProperties, JedisService jedisService) {
+        return new DefaultRegisterServiceImpl(onlyRegisterService(registerProperties, jedisService), registerProperties, jedisService);
 
     }
 }

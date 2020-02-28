@@ -1,4 +1,4 @@
-package com.huhuamin.req.json.result;
+package com.huhuamin.result;
 
 
 import com.github.pagehelper.PageInfo;

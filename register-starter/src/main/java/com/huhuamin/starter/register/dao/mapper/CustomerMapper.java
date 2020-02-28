@@ -43,4 +43,8 @@ public interface CustomerMapper extends MapperDb<Customer> {
     int updateByPrimaryKeySelective(Customer record);
 
     String selectDefaultImg(@Param("paramIndex") String paramIndex);
+
+    Byte selectFreezeStatusByCustId(String custId);
+
+    int updatePushIdAndCustId(String custId, String pushId);
 }

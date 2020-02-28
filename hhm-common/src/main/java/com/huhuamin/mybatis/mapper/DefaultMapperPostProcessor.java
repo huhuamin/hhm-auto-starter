@@ -1,7 +1,7 @@
 package com.huhuamin.mybatis.mapper;
 
 import com.huhuamin.req.ReqComm;
-import com.huhuamin.req.json.result.JsonResult;
+import com.huhuamin.result.JsonResult;
 import com.huhuamin.validate.CommonValidate;
 import org.springframework.util.StringUtils;
 

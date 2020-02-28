@@ -1,4 +1,4 @@
-package com.huhuamin.req.json.result;
+package com.huhuamin.result;
 
 /**
  * @Author 胡化敏

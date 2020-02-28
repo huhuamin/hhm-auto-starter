@@ -4,7 +4,7 @@ package com.huhuamin.starter.register.utils;
 import com.huhuamin.execption.HuhuaminException;
 import com.huhuamin.jedis.distributed.lock.service.JedisService;
 import com.huhuamin.req.constants.HhmConstants;
-import com.huhuamin.req.json.result.JsonResult;
+import com.huhuamin.result.JsonResult;
 import org.apache.commons.lang3.StringUtils;
 
 
