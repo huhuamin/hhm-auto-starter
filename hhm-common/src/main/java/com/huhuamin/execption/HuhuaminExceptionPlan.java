@@ -11,9 +11,11 @@ public class HuhuaminExceptionPlan extends RuntimeException {
 
     public HuhuaminExceptionPlan(String message, Exception e) {
         super(message, e);
+        e.printStackTrace();
     }
 
     public HuhuaminExceptionPlan(String message) {
+
         super(message);
     }
 }

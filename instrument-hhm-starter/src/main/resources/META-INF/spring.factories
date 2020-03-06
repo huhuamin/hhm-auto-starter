@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.huhuamin.starter.sms.SmsAutoConfiguration,\
+com.huhuamin.starter.fdb.FileDbAutoConfiguration

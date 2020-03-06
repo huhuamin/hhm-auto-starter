@@ -11,6 +11,8 @@ public class HuhuaminException extends RuntimeException {
 
     public HuhuaminException(String message, Exception e) {
         super(message, e);
+        e.printStackTrace();
+
     }
 
     public HuhuaminException(String message) {

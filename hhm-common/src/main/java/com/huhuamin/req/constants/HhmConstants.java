@@ -14,7 +14,7 @@ public class HhmConstants {
     /**
      * 短信常量与提示
      */
-    public static  Map<String, String> sendKeyValue = new HashMap<>();
+    public static Map<String, String> sendKeyValue = new HashMap<>();
     /**
      * 手机注册验证码前缀
      */
@@ -27,17 +27,19 @@ public class HhmConstants {
     /**
      * 手机忘记验证码前缀
      */
-//    public static final String PRE_FIX_PHONE_FORGET = "忘记密码";
+    public static final String PRE_FIX_PHONE_FORGET = "forget";
+
 
     /**
      * 手机修改
      */
+    public static final String PRE_FIX_PHONE_ALT = "phoneAlt";
     /**
-     * 手机修改
+     * 手机修改2
      */
-    public static final String PRE_FIX_PHONE_ALT = "修改手机号";
-    public static final String PRE_FIX_PHONE_ALT2 = "修改手机号2";
-    public static final String PRE_FIX_PHONE_APPOINT = "预约";
+    public static final String PRE_FIX_PHONE_ALT2 = "phoneAlt2";
+
+
     /**
      * 设置登录密码
      */
@@ -78,9 +80,10 @@ public class HhmConstants {
      */
     public static final Integer LOGIN_ERR_COUNT_REST_TIME = 30;
     /**
-     * 错误次数
+     * 最大登错次数
      */
     public static final Integer MAX_LOGIN_ERR_COUNT = 5;
+
 
     /**
      * 图文验证码Key

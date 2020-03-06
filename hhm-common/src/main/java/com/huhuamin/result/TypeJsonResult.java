@@ -55,6 +55,13 @@ public class TypeJsonResult<T> extends JsonResult {
 
     }
 
+    public TypeJsonResult(JsonResult jsonResult) {
+        this.setStatusCode(jsonResult.getStatusCode());
+        this.setCode(jsonResult.getCode());
+        this.setMessage(jsonResult.getMessage());
+
+    }
+
     public TypeJsonResult(T type) {
         super.setStatusCode(true);
         this.type = type;
