@@ -1,10 +1,5 @@
 package com.huhuamin.starter.sms.exteral.sy;
 
-import com.huhuamin.starter.sms.exteral.sy.JsonReqClient;
-import com.huhuamin.starter.sms.exteral.sy.SySmsClient;
-import com.huhuamin.starter.sms.exteral.sy.SySmsProperties;
-import com.huhuamin.starter.sms.exteral.yzx.YzxSmsClient;
-import com.huhuamin.starter.sms.exteral.yzx.YzxSmsProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

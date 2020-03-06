@@ -1,7 +1,5 @@
 package com.huhuamin.starter.sms.exteral.alibaba;
 
-import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsClient;
-import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

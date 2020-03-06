@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @param <M>{@link MapperDb}
  */
-public interface Service<M extends MapperDb, Req extends ReqComm> {
+public interface Service<M extends MapperDb, Req extends ReqComm,T extends JsonResult> {
     /**
      * 单表业务逻辑处理
      *
@@ -20,7 +20,7 @@ public interface Service<M extends MapperDb, Req extends ReqComm> {
      * @param mapperExtra 额外的数据库操作由实现接口自己处理
      * @return
      */
-    JsonResult doService(M mapper, Req reqSource, List<MapperDb> mapperExtra);
+    T doService(M mapper, Req reqSource, List<MapperDb> mapperExtra);
 
     /**
      * 单表业务逻辑处理
@@ -29,7 +29,7 @@ public interface Service<M extends MapperDb, Req extends ReqComm> {
      * @param reqSource
      * @return
      */
-    JsonResult doService(M mapper, Req reqSource);
+     T doService(M mapper, Req reqSource);
 
 
 }

@@ -13,12 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AliyunFileDbConfiguration {
 
-    @Bean
-    @ConditionalOnProperty(name = "spring.filedb.aliyun.enabled", havingValue = "true", matchIfMissing = false)
-    public FdbAliyunService fdbAliyunService(AliyunCosProperties aliyunCosProperties) {
-        return new FdbAliyunService(aliyunCosProperties, ossClient(aliyunCosProperties));
-    }
-
 
     @Bean
     @ConditionalOnProperty(name = "spring.filedb.aliyun.enabled", havingValue = "true", matchIfMissing = false)
@@ -26,5 +20,12 @@ public class AliyunFileDbConfiguration {
         OSSClient ossClient = new OSSClient(aliyunCosProperties.getEndpoint(), aliyunCosProperties.getAccessKeyId(), aliyunCosProperties.getSecret());
         return ossClient;
     }
+
+    @Bean
+    @ConditionalOnProperty(name = "spring.filedb.aliyun.enabled", havingValue = "true", matchIfMissing = false)
+    public FdbAliyunService fdbAliyunService(AliyunCosProperties aliyunCosProperties, OSSClient ossClient) {
+        return new FdbAliyunService(aliyunCosProperties, ossClient);
+    }
+
 
 }

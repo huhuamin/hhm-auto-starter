@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.Date;
 
 /**
@@ -49,4 +50,28 @@ public class DateUtils {
         return DateFormatUtils.format(new Date(), pattern);
     }
 
+
+
+    public static LocalDate date2LocalDate(Date date) {
+        Instant instant = date.toInstant();//An instantaneous point on the time-line.(时间线上的一个瞬时点。)
+        ZoneId zoneId = ZoneId.systemDefault();//A time-zone ID, such as {@code Europe/Paris}.(时区)
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        return localDate;
+    }
+
+
+    public static LocalDateTime date2LocalDateTime(Date date) {
+        Instant instant = date.toInstant();//An instantaneous point on the time-line.(时间线上的一个瞬时点。)
+        ZoneId zoneId = ZoneId.systemDefault();//A time-zone ID, such as {@code Europe/Paris}.(时区)
+        LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+        return localDateTime;
+    }
+
+    public static Date localDateTime2Date(LocalDateTime localDateTime) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zdt = localDateTime.atZone(zoneId);//Combines this date-time with a time-zone to create a  ZonedDateTime.
+        Date date = Date.from(zdt.toInstant());
+        return date;
+
+    }
 }

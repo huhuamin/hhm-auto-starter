@@ -2,8 +2,6 @@ package com.huhuamin.starter.sms;
 
 import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsConfiguration;
 import com.huhuamin.starter.sms.exteral.alibaba.AlibabaSmsProperties;
-
-
 import com.huhuamin.starter.sms.exteral.sy.SySmsConfiguration;
 import com.huhuamin.starter.sms.exteral.sy.SySmsProperties;
 import com.huhuamin.starter.sms.exteral.yzx.YzxSmsConfiguration;

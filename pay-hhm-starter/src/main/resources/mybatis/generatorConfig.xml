@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+    <classPathEntry
+            location="/Users/Huhuamin/Documents/HHMLIB2/mysql/mysql-connector-java/5.1.38/mysql-connector-java-5.1.38.jar"/>
+
+    <context id="context" targetRuntime="com.huhuamin.starter.pay.generator.InsoIntrospectedTable">
+        <commentGenerator type="com.huhuamin.starter.pay.generator.HhmMyCommentGenerator">
+            <property name="suppressAllComments" value="false"/>
+            <property name="addRemarkComments" value="true"/>
+            <property name="suppressDate" value="false"/>
+        </commentGenerator>
+
+        <jdbcConnection userId="huhuamin" password="HUHUAMIN@423177" driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://rm-wz98317m8lwodkx92so.mysql.rds.aliyuncs.com:3306/ymaz?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;tinyInt1isBit=false&amp;useSSL=false"/>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="true"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.huhuamin.starter.pay.dao.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.huhuamin.starter.pay.dao.mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator targetPackage="com.huhuamin.starter.pay.dao.mapper" type="XMLMAPPER"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+
+        <table schema="ymaz" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false"
+               enableSelectByExample="false" tableName="clzah_bussiness_depoist_base"
+               domainObjectName="Depoist"/>
+
+    </context>
+</generatorConfiguration>
+
+
+
